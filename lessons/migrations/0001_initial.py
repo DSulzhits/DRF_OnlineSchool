@@ -12,16 +12,13 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Course',
+            name='Lesson',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=150, verbose_name='курс')),
-                ('preview', models.ImageField(blank=True, null=True, upload_to='courses/', verbose_name='превью')),
+                ('title', models.CharField(max_length=150, verbose_name='название')),
                 ('description', models.TextField(blank=True, null=True, verbose_name='описание')),
+                ('preview', models.ImageField(blank=True, null=True, upload_to='lessons/', verbose_name='превью')),
+                ('video_url', models.URLField(blank=True, null=True, verbose_name='видео')),
             ],
-            options={
-                'verbose_name': 'Курс',
-                'verbose_name_plural': 'Курсы',
-            },
         ),
     ]
