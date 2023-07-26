@@ -13,3 +13,17 @@ class Course(models.Model):
     class Meta:
         verbose_name = 'Курс'
         verbose_name_plural = 'Курсы'
+
+
+class Lesson(models.Model):
+    title = models.CharField(max_length=150, verbose_name='название')
+    description = models.TextField(verbose_name='описание', **NULLABLE)
+    preview = models.ImageField(upload_to='lessons/', verbose_name='превью', **NULLABLE)
+    video_url = models.URLField(verbose_name='видео', **NULLABLE)
+
+    def __str__(self):
+        return f'{self.title}'
+
+    class Meta:
+        verbose_name = 'Урок'
+        verbose_name_plural = 'Уроки'
