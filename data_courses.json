@@ -5,7 +5,28 @@
     "fields": {
       "title": "Code-testing",
       "preview": "",
-      "description": "Code testing base skills"
+      "description": "Code testing skills for testers, from junior to senior",
+      "owner": null
+    }
+  },
+   {
+    "model": "courses.course",
+    "pk": 2,
+    "fields": {
+      "title": "Design and Artwork",
+      "preview": "",
+      "description": "We teach you how to be like a Roman Lebyedev",
+      "owner": null
+    }
+  },
+  {
+    "model": "courses.course",
+    "pk": 3,
+    "fields": {
+      "title": "Python development",
+      "preview": "",
+      "description": "From Python-Junior to Python-Senior",
+      "owner": null
     }
   },
   {
@@ -14,9 +35,34 @@
     "fields": {
       "course": 1,
       "title": "Code-testing base rules",
-      "description": "Start your learning here",
+      "description": "Receive base testing skills",
       "preview": "",
-      "video_url": null
+      "video_url": null,
+      "owner": 1
+    }
+  },
+  {
+    "model": "courses.lesson",
+    "pk": 5,
+    "fields": {
+      "course": 1,
+      "title": "Moderator's Code testing advanced",
+      "description": "Improve your testing skills",
+      "preview": "",
+      "video_url": null,
+      "owner": 2
+    }
+  },
+  {
+    "model": "courses.lesson",
+    "pk": 6,
+    "fields": {
+      "course": 1,
+      "title": "Member's Code testing expert",
+      "description": "Maximize your testing skills",
+      "preview": "",
+      "video_url": null,
+      "owner": 3
     }
   },
   {
