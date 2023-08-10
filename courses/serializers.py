@@ -1,10 +1,13 @@
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
+from rest_framework.serializers import ModelSerializer, SerializerMethodField, CharField
 from rest_framework.relations import SlugRelatedField
 from courses.models import Course, Lesson, Payment
 from users.models import User
+from courses.validators import validator_scam_links
 
 
 class LessonSerializer(ModelSerializer):
+    title = CharField(validators=[validator_scam_links])
+
     class Meta:
         model = Lesson
         fields = '__all__'
@@ -20,6 +23,7 @@ class LessonListSerializer(ModelSerializer):
 
 
 class CourseSerializer(ModelSerializer):
+    title = CharField(validators=[validator_scam_links])
     lessons = LessonSerializer(many=True, read_only=True, source='lesson_set')
     lessons_number = SerializerMethodField()
 
