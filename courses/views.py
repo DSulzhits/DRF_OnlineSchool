@@ -14,7 +14,14 @@ from courses.serializers import CourseSerializer, LessonSerializer, PaymentsSeri
 class CourseViewSet(ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
-    permission_classes = [IsAuthenticated, IsModerator]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_superuser or user.role == UserRoles.MODERATOR:
+            return Course.objects.all()
+        else:
+            return Course.objects.filter(owner=user)
 
 
 class LessonListAPIView(ListAPIView):
