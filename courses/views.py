@@ -9,12 +9,14 @@ from courses.models import Course, Lesson, Payment
 from users.models import UserRoles
 from courses.permissions import IsModerator, IsOwner, IsMember
 from courses.serializers import CourseSerializer, LessonSerializer, PaymentsSerializer, LessonListSerializer
+from courses.paginators import LessonPaginator, CoursePaginator, PaymentPaginator
 
 
 class CourseViewSet(ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
     permission_classes = [IsAuthenticated]
+    pagination_class = CoursePaginator
 
     def get_queryset(self):
         user = self.request.user
@@ -28,6 +30,7 @@ class LessonListAPIView(ListAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonListSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = LessonPaginator
 
     def get_queryset(self):
         user = self.request.user
@@ -72,6 +75,7 @@ class PaymentListCreateAPIView(ListCreateAPIView):
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ['course', 'lesson', 'payment_type']
     ordering_fields = ['payment_date']
+    pagination_class = PaymentPaginator
     permission_classes = [IsAuthenticated]
 
 # class LessonListCreateAPIView(ListCreateAPIView):
