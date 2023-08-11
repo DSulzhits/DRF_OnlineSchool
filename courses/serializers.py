@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer, SerializerMethodField, CharField
 from rest_framework.relations import SlugRelatedField
-from courses.models import Course, Lesson, Payment
+from courses.models import Course, Lesson, Payment, CourseSubscription
 from users.models import User
 from courses.validators import validator_scam_links
 
@@ -41,6 +41,12 @@ class CourseSerializer(ModelSerializer):
 class PaymentsSerializer(ModelSerializer):
     class Meta:
         model = Payment
+        fields = "__all__"
+
+
+class CourseSubscriptionSerializer(ModelSerializer):
+    class Meta:
+        model = CourseSubscription
         fields = "__all__"
 
 # class PaymentCreateSerializer(ModelSerializer):
