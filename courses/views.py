@@ -1,14 +1,15 @@
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView, RetrieveAPIView, \
+from rest_framework.generics import ListCreateAPIView, ListAPIView, RetrieveAPIView, \
     CreateAPIView, UpdateAPIView, DestroyAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
-from courses.models import Course, Lesson, Payment
+from courses.models import Course, Lesson, Payment, CourseSubscription
 from users.models import UserRoles
 from courses.permissions import IsModerator, IsOwner, IsMember
-from courses.serializers import CourseSerializer, LessonSerializer, PaymentsSerializer, LessonListSerializer
+from courses.serializers import CourseSerializer, LessonSerializer, PaymentsSerializer, LessonListSerializer, \
+    CourseSubscriptionSerializer
 from courses.paginators import LessonPaginator, CoursePaginator, PaymentPaginator
 
 
@@ -76,6 +77,18 @@ class PaymentListCreateAPIView(ListCreateAPIView):
     filterset_fields = ['course', 'lesson', 'payment_type']
     ordering_fields = ['payment_date']
     pagination_class = PaymentPaginator
+    permission_classes = [IsAuthenticated]
+
+
+class SubscriptionCreateAPIView(CreateAPIView):
+    serializer_class = CourseSubscriptionSerializer
+    queryset = CourseSubscription.objects.all()
+    permission_classes = [IsAuthenticated]
+
+
+class SubscriptionUpdateView(UpdateAPIView):
+    serializer_class = CourseSubscriptionSerializer
+    queryset = CourseSubscription.objects.all()
     permission_classes = [IsAuthenticated]
 
 # class LessonListCreateAPIView(ListCreateAPIView):
