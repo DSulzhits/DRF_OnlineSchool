@@ -2,15 +2,16 @@ from rest_framework.serializers import ModelSerializer, SerializerMethodField, C
 from rest_framework.relations import SlugRelatedField
 from courses.models import Course, Lesson, Payment, CourseSubscription
 from users.models import User
-from courses.validators import validator_scam_links
+from courses.validators import ScamValidator
 
 
 class LessonSerializer(ModelSerializer):
-    title = CharField(validators=[validator_scam_links])
+    # video_url = CharField(validators=[validator_scam_links])
 
     class Meta:
         model = Lesson
         fields = '__all__'
+        validators = [ScamValidator(field='video_url')]
 
 
 class LessonListSerializer(ModelSerializer):
@@ -23,15 +24,22 @@ class LessonListSerializer(ModelSerializer):
 
 
 class CourseSerializer(ModelSerializer):
-    title = CharField(validators=[validator_scam_links])
     lessons = LessonSerializer(many=True, read_only=True, source='lesson_set')
     lessons_number = SerializerMethodField()
+    subscribe_status = SerializerMethodField
 
     def get_lessons_number(self, course):
         lessons = Lesson.objects.filter(course=course)
         if lessons:
             return lessons.count()
         return 0
+
+    def get_subscribe_status(self, instance):
+        user = self.context['request'].user.id
+        object = CourseSubscription.objects.filter(course=instance).filter(user=user)
+        if object:
+            return object.first().status
+        return False
 
     class Meta:
         model = Course
