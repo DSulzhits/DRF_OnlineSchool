@@ -1,16 +1,21 @@
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import ListCreateAPIView, ListAPIView, RetrieveAPIView, \
     CreateAPIView, UpdateAPIView, DestroyAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework import status
 
 from courses.models import Course, Lesson, Payment, CourseSubscription
 from users.models import UserRoles
 from courses.permissions import IsModerator, IsOwner, IsMember
 from courses.serializers import CourseSerializer, LessonSerializer, PaymentsSerializer, LessonListSerializer, \
-    CourseSubscriptionSerializer
+    CourseSubscriptionSerializer, PaymentCreateSerializer
 from courses.paginators import LessonPaginator, CoursePaginator, PaymentPaginator
+from rest_framework.response import Response
+from courses.services import checkout_session, create_payment
+import stripe
 
 
 class CourseViewSet(ModelViewSet):
@@ -70,7 +75,7 @@ class LessonDeleteAPIView(DestroyAPIView):
     permission_classes = [IsAuthenticated, IsOwner | IsAdminUser]
 
 
-class PaymentListCreateAPIView(ListCreateAPIView):
+class PaymentListView(ListAPIView):
     serializer_class = PaymentsSerializer
     queryset = Payment.objects.all()
     filter_backends = [DjangoFilterBackend, OrderingFilter]
@@ -78,6 +83,49 @@ class PaymentListCreateAPIView(ListCreateAPIView):
     ordering_fields = ['payment_date']
     pagination_class = PaymentPaginator
     permission_classes = [IsAuthenticated]
+
+
+class PaymentCreateAPIView(CreateAPIView):
+    serializer_class = PaymentCreateSerializer
+    queryset = Payment.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    # @staticmethod
+    # def create_payment(course, user):
+    #     Payment.objects.create(
+    #         user=user,
+    #         course=course,
+    #         payment_sum=course.price,
+    #     )
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exeption=True)
+        session = checkout_session(
+            course=serializer.validated_data['course'],
+            user=self.request.user
+        )
+        serializer.save()
+
+        create_payment(course=serializer.validated_data['course'],
+                       user=self.request.user)
+        return Response(session['id'], status=status.HTTP_201_CREATED)
+
+
+class PaymentGetView(APIView):
+    def get_payment(self, request, payment_id):
+        payment_intent = stripe.PaymentIntent.retrieve(payment_id)
+        return Response({'status': payment_intent.status, })
+
+
+# class PaymentListCreateAPIView(ListCreateAPIView):
+#     serializer_class = PaymentsSerializer
+#     queryset = Payment.objects.all()
+#     filter_backends = [DjangoFilterBackend, OrderingFilter]
+#     filterset_fields = ['course', 'lesson', 'payment_type']
+#     ordering_fields = ['payment_date']
+#     pagination_class = PaymentPaginator
+#     permission_classes = [IsAuthenticated]
 
 
 class SubscriptionCreateAPIView(CreateAPIView):
