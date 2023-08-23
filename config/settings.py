@@ -167,3 +167,7 @@ CSRF_TRUSTED_ORIGINS = [
 
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 STRIPE_URL = os.getenv("STRIPE_URL")
+
+ALLOWED_DOMAINS = [
+    'youtube.com'
+]
