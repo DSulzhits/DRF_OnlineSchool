@@ -14,6 +14,7 @@ class User(AbstractUser):
     username = None
     email = models.EmailField(unique=True, verbose_name='Email')
     role = models.CharField(max_length=9, choices=UserRoles.choices, default=UserRoles.MEMBER)
+    is_active = models.BooleanField(default=True, verbose_name="активный")
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
