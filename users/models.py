@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from datetime import datetime
 
 NULLABLE = {'blank': True, 'null': True}
 
@@ -14,6 +15,7 @@ class User(AbstractUser):
     username = None
     email = models.EmailField(unique=True, verbose_name='Email')
     role = models.CharField(max_length=9, choices=UserRoles.choices, default=UserRoles.MEMBER)
+    last_login = models.DateTimeField(default=datetime.now, verbose_name="последний вход")
     is_active = models.BooleanField(default=True, verbose_name="активный")
 
     USERNAME_FIELD = "email"
