@@ -16,6 +16,7 @@ from courses.paginators import LessonPaginator, CoursePaginator, PaymentPaginato
 from rest_framework.response import Response
 from courses.services import checkout_session, create_payment
 import stripe
+from courses.tasks import send_mail_course_update
 
 
 class CourseViewSet(ModelViewSet):
@@ -23,6 +24,13 @@ class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
     permission_classes = [IsAuthenticated]
     pagination_class = CoursePaginator
+
+    def perform_create(self, serializer) -> None:
+        serializer.save(owner=self.request.user)
+
+    def perform_update(self, serializer):
+        self.object = serializer.save()
+        send_mail_course_update.delay(self.object.pk)
 
     def get_queryset(self):
         user = self.request.user
