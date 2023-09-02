@@ -87,13 +87,26 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# # LOCAL
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('DATABASE_LOCAL'),
+#         'USER': os.getenv('POSTGRESSQL_USER'),
+#         'PORT': '5432',
+#         'PASSWORD': os.getenv('POSTGRESSQL_KEY')
+#     }
+# }
+
+# # DOCKER
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'drf_online_school',
-        'USER': 'postgres',
+        'NAME': os.getenv('DATABASE_DOCKER'),
+        'USER': os.getenv('POSTGRESSQL_USER'),
         'PORT': '5432',
-        'PASSWORD': os.getenv('POSTGRESSQL_KEY')
+        'PASSWORD': os.getenv('POSTGRESSQL_KEY_DOCKER'),
+        'HOST': 'postgres'
     }
 }
 
@@ -120,7 +133,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Minsk'
 
 USE_I18N = True
 
@@ -173,8 +186,11 @@ ALLOWED_DOMAINS = [
     'youtube.com'
 ]
 
-CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
-CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
+# CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"   # local
+# CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"  # local
+
+CELERY_BROKER_URL = "redis://redis:6379/0"  # for docker
+CELERY_RESULT_BACKEND = "redis://redis:6379/0"  # for docker
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.yandex.com'
